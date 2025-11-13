@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Study Resources Sharing Portal</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <div class="d-flex justify-content-end mt-3">
+        <div sec:authorize="isAuthenticated()">
+            Welcome, <span sec:authentication="name"></span>!
+            <form th:action="@{/logout}" method="post" class="d-inline ml-2">
+                <button type="submit" class="btn btn-link">Logout</button>
+            </form>
+        </div>
+        <div sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}" class="btn btn-primary">Login</a>
+        </div>
+    </div>
+    <h1 class="mt-5">Study Resources</h1>
+    <a href="/upload" class="btn btn-primary mb-3">Upload Resource</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Rating</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="resource : ${resources}">
+            <td th:text="${resource.name}"></td>
+            <td th:text="${resource.description}"></td>
+            <td>
+                <span th:text="${#numbers.formatDecimal(resource.rating, 1, 1)}"></span>/5
+                (<span th:text="${resource.ratingCount}"></span> ratings)
+            </td>
+            <td>
+                <a th:href="@{/download/{id}(id=${resource.id})}" class="btn btn-success">Download</a>
+                <form th:action="@{/rate/{id}(id=${resource.id})}" method="post" class="d-inline">
+                    <select name="rating" class="form-control-sm">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm">Rate</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
